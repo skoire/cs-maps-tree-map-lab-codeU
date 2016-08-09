@@ -73,6 +73,16 @@ public class MyTreeMap<K, V> implements Map<K, V> {
 		
 		// the actual search
         // TODO: Fill this in.
+        Node node = root;
+        while (node != null){
+        	if (k.compareTo(node.key) < 0) {
+        		node = node.left;
+        	} else if (k.compareTo(node.key) > 0){
+        		node = node.right;
+        	} else {
+        		return node;
+        	}
+        }
         return null;
 	}
 
@@ -92,6 +102,19 @@ public class MyTreeMap<K, V> implements Map<K, V> {
 
 	@Override
 	public boolean containsValue(Object target) {
+		return containsValueHelper(root, target);
+	}
+
+	private boolean containsValueHelper(Node node, Object target){
+		if (node==null){
+			return false;
+		} if (equals(target, node.value)){
+			return true;
+		} if (containsValueHelper(node.left, target)){
+			return true;
+		} if (containsValueHelper(node.right, target)){
+			return true;
+		}
 		return false;
 	}
 
@@ -117,8 +140,17 @@ public class MyTreeMap<K, V> implements Map<K, V> {
 	@Override
 	public Set<K> keySet() {
 		Set<K> set = new LinkedHashSet<K>();
-        // TODO: Fill this in.
+        addOrderedTerms(root, set);
 		return set;
+	}
+
+	private void addOrderedTerms(Node node, Set<K> set){
+		if (node == null) {
+			return;
+		}
+		addOrderedTerms(node.left, set);
+		set.add(node.key);
+		addOrderedTerms(node.right, set);
 	}
 
 	@Override
@@ -136,8 +168,53 @@ public class MyTreeMap<K, V> implements Map<K, V> {
 
 	private V putHelper(Node node, K key, V value) {
         // TODO: Fill this in.
-        return null;
+        Comparable<? super K> k = (Comparable<? super K>) key;
+        int comparer = k.compareTo(node.key);
+	    if (comparer < 0) {
+	        if (node.left == null) {
+	            node.left = new Node(key, value);
+	            size++;
+	            return null;
+	        } else {
+	            return putHelper(node.left, key, value);
+	        }
+	    }
+	    if (comparer > 0) {
+	        if (node.right == null) {
+	            node.right = new Node(key, value);
+	            size++;
+	            return null;
+	        } else {
+	            return putHelper(node.right, key, value);
+	        }
+	    }
+	    V oldValue = node.value;
+	    node.value = value;
+	    return oldValue;
 	}
+ //        int comparer = k.compareTo(mainNode.key);
+ //        Node mainNode = node;
+ //        if (containsKey(key)){
+ //        	Node currentNode = findNode(key);
+ //        	V oldValue = currentNode.value;
+ //        	currentNode.value = value;
+ //        	return oldValue;
+ //        } else {
+ //        	while(comparer != null){
+
+ //        	}
+ //        }
+
+ //        size++;
+ //        return null;
+	// }
+
+
+
+
+
+
+
 
 	@Override
 	public void putAll(Map<? extends K, ? extends V> map) {
